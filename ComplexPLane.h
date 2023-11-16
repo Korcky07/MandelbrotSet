@@ -12,7 +12,15 @@ enum State { CALCULATING, DISPLAYING };
 class ComplexPlane : public sf::Drawable
 {
 public:
-
+	ComplexPlane(int pixelWidth, int pixelHeight);
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	void updateRender();
+	void zoomIn();
+	void zoomOut();
+	void setCenter(sf::Vector2i mousePixel);
+	void setMouseLocation(sf::Vector2i mousePixel);
+	void loadText(sf::Text& text);
+	
 private:
 	int m_vArray;
 	State m_state;
@@ -22,6 +30,8 @@ private:
 	sf::Vector2f m_plane_size;
 	int m_zoomCount;
 	float m_aspectRatio;
-
+	size_t countIterations(sf::Vector2f coord);
+	void iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b);
+	sf::Vector2f mapPixelToCoords(sf::Vector2i mousePixel);
 };
 #endif // !COMPLEX_PLANE
