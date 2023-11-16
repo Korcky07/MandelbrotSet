@@ -4,6 +4,11 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # User-specific files
+vs*
+*.vcx*
+*.sln
+x64
+x86
 *.rsuser
 *.suo
 *.user
