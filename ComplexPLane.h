@@ -13,7 +13,7 @@ class ComplexPlane : public sf::Drawable
 {
 public:
 	ComplexPlane(int pixelWidth, int pixelHeight);
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	void updateRender();
 	void zoomIn();
 	void zoomOut();
@@ -22,7 +22,7 @@ public:
 	void loadText(sf::Text& text);
 	
 private:
-	int m_vArray;
+	sf::VertexArray m_vArray;
 	State m_state;
 	sf::Vector2f m_mouseLocation;
 	sf::Vector2f m_pixel_size;
