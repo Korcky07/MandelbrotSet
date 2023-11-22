@@ -64,26 +64,6 @@ void ComplexPlane::updateRender()
 		m_state = DISPLAYING;
 	}
 }
-/*void ComplexPlane::updateRender()
-{
-	if (m_state == State::CALCULATING)
-	{
-		for (int y = 0; y < m_pixel_size.y; y++)
-		{
-			for (int x = 0; x < m_pixel_size.x; x++)
-			{
-				size_t index = x + y * m_pixel_size.x;
-				m_vArray[index].position = Vector2f(float(x), float(y));
-				Vector2f coord = mapPixelToCoords(Vector2i(x, y));
-				size_t iterations = countIterations(coord);
-				Color color;
-				iterationsToRGB(iterations, color.r, color.g, color.b);
-				m_vArray[index].color = color;
-			}
-		}
-		m_state = DISPLAYING;
-	}
-}*/
 void ComplexPlane::updateRenderHelper(int y)
 {
 	for (int x = 0; x < m_pixel_size.x; x++)
@@ -155,18 +135,6 @@ size_t ComplexPlane::countIterations(sf::Vector2f coord)
 }
 void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b)
 {
-	/* std::vector<int> regions;
-	std::vector<int> subregions;
-	int x = MAX_ITER / 5;
-
-	for (int i = 1; i < 5; i++)
-	{
-		regions.push_back(x * i);
-	}
-	for (int j = 1; j < 3; j++)
-	{
-		subregions.push_back((x / 3) * j);
-	}*/
 	if (count == MAX_ITER)
 	{
 		r = 0;
