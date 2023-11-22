@@ -107,10 +107,6 @@ int main()
 		****************************************
 		*/
 
-		for (std::thread* t : plane.threads)
-		{
-			t->join();
-		}
 		window.clear();
 		window.draw(plane);
 		window.draw(text);

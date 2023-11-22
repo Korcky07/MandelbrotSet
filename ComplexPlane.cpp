@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iomanip>
 #include <complex>
+#include <thread>
 
 using namespace sf;
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
@@ -39,6 +40,7 @@ void ComplexPlane::updateRender()
 	if (m_state == State::CALCULATING)
 	{
 		int rows = 0;
+		std::vector<std::thread*> threads;
 		int threadLimit = std::thread::hardware_concurrency();
 		if (threadLimit < 10)
 		{
@@ -52,13 +54,13 @@ void ComplexPlane::updateRender()
 				threads.push_back(t);
 				rows++;
 			}
-		}	
-		for (int i = 0; i < threadLimit; i++)
-		{
-			threads.at(i)->join();
-			delete threads.at(i);
+			for (int i = 0; i < threadLimit; i++)
+			{
+				threads.at(i)->join();
+				delete threads.at(i);
+			}
+			threads.clear();
 		}
-		threads.clear();
 		m_state = DISPLAYING;
 	}
 }

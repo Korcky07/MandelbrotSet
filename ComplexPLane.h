@@ -2,7 +2,6 @@
 #define COMPLEX_PLANE
 
 #include <SFML/Graphics.hpp>
-#include <thread>
 const unsigned int MAX_ITER = 256;
 const float BASE_WIDTH = 4.0;
 const float BASE_HEIGHT = 4.0;
@@ -21,7 +20,6 @@ public:
 	void setCenter(sf::Vector2i mousePixel);
 	void setMouseLocation(sf::Vector2i mousePixel);
 	void loadText(sf::Text& text);
-	std::vector<std::thread*> threads;
 	
 private:
 	sf::VertexArray m_vArray;
