@@ -33,5 +33,6 @@ private:
 	size_t countIterations(sf::Vector2f coord);
 	void iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b);
 	sf::Vector2f mapPixelToCoords(sf::Vector2i mousePixel);
+	void updateRenderHelper(int y);
 };
 #endif // !COMPLEX_PLANE

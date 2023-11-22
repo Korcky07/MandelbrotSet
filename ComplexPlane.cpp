@@ -1,6 +1,7 @@
 #include "ComplexPlane.h"
 #include <iostream>
 #include <cmath> //maybe remove later if zoom in/out doesn't use exponents
+#include <thread>
 
 using namespace sf;
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
@@ -24,22 +25,40 @@ void ComplexPlane::updateRender()
 {
 	if (m_state == State::CALCULATING)
 	{
-		for (int y = 0; y < m_pixel_size.y; y++)
+		std::vector<std::thread*> threads;
+		int rows = 0;
+		int threadLimit = std::thread::hardware_concurrency();
+		if (threadLimit < 10)
 		{
-			for (int x = 0; x < m_pixel_size.x; x++)
-			{
-				size_t index = x + y * m_pixel_size.x;
-				m_vArray[index].position = Vector2f(float(x), float(y));
-				Vector2f coord = mapPixelToCoords(Vector2i(x, y));
-				size_t iterations = countIterations(coord);
-				Color color;
-				iterationsToRGB(iterations, color.r, color.g, color.b);
-				m_vArray[index].color = color;
-			}
+			threadLimit = 10;
 		}
+		for (int y = 0; y < threadLimit, rows < m_pixel_size.y; y++, rows++)
+		{
+			std::thread* t = new std::thread(&ComplexPlane::updateRenderHelper, rows);
+		}
+		for (int i = 0; i < threadLimit; i++)
+		{
+			threads[i]->join();
+			delete threads[i];
+		}
+		threads.clear();
 		m_state = DISPLAYING;
 	}
 }
+void ComplexPlane::updateRenderHelper(int y)
+{
+	for (int x = 0; x < m_pixel_size.x; x++)
+	{
+		size_t index = x + y * m_pixel_size.x;
+		m_vArray[index].position = Vector2f(float(x), float(y));
+		Vector2f coord = mapPixelToCoords(Vector2i(x, y));
+		size_t iterations = countIterations(coord);
+		Color color;
+		iterationsToRGB(iterations, color.r, color.g, color.b);
+		m_vArray[index].color = color;
+	}
+}
+
 void ComplexPlane::zoomIn()
 {
 	m_zoomCount++;
