@@ -1,6 +1,8 @@
 #include "ComplexPlane.h"
 #include <iostream>
 #include <cmath> //maybe remove later if zoom in/out doesn't use exponents
+#include <sstream>
+#include <iomanip>
 
 using namespace sf;
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
@@ -14,6 +16,7 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
 	m_state = State::CALCULATING;
 	m_vArray = VertexArray(Points, pixelWidth * pixelHeight);
 	m_mouseLocation = Vector2f(0, 0);
+	m_zoomCount = 0;
 }
 
 void ComplexPlane::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -56,19 +59,33 @@ void ComplexPlane::zoomOut()
 }
 void ComplexPlane::setCenter(sf::Vector2i mousePixel)
 {
+	m_plane_center = mapPixelToCoords(mousePixel);
 
+	m_state = CALCULATING;
 }
 void ComplexPlane::setMouseLocation(sf::Vector2i mousePixel)
 {
-
+	m_mouseLocation = mapPixelToCoords(mousePixel);
 }
 void ComplexPlane::loadText(sf::Text& text)
 {
+
+	std::ostringstream strmOut;
+
+	strmOut << "Mandelbrot Set" << std::endl << 
+		"Center: (" << std::fixed << std::setprecision(5) << m_plane_center.x << ", " << m_plane_center.y << ")" << std::endl <<
+		"Cursor: (" << m_mouseLocation.x << ", " << m_mouseLocation.y << ")" << std::endl <<
+		"Left-Click to Zoom In" << std::endl <<
+		"Right-Click to Zoom Out";
+
+	text.setPosition(0, 0);
+	text.setString(strmOut.str());
 
 }
 
 size_t ComplexPlane::countIterations(sf::Vector2f coord)
 {
+	
 	return 0;
 }
 void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b)
@@ -78,7 +95,7 @@ void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf:
 sf::Vector2f ComplexPlane::mapPixelToCoords(sf::Vector2i mousePixel)
 {
 	Vector2f result;
-	result.x = (mousePixel.x / m_pixel_size.x) * m_pixel_size.x + (m_plane_center.x - m_plane_size.x / 2.0);
-	result.y = ((m_pixel_size.y - mousePixel.y) / m_pixel_size.y) * m_pixel_size.y + (m_plane_center.y - m_plane_size.y / 2.0);
+	result.x = (mousePixel.x / m_pixel_size.x) * m_plane_size.x + (m_plane_center.x - m_plane_size.x / 2.0);
+	result.y = ((m_pixel_size.y - mousePixel.y) / m_pixel_size.y) * m_plane_size.y + (m_plane_center.y - m_plane_size.y / 2.0);
 	return result;
 }

@@ -1,6 +1,7 @@
 #include <iostream> 
 #include <complex> 
 #include <SFML/Graphics.hpp>
+#include "ComplexPLane.h"
 using namespace std;
 using namespace sf;
 
@@ -21,18 +22,17 @@ int main()
         throw runtime_error("Could not open file");
     }
 
-    Text text;
+	Text text;
 
-    text.setPosition(529, 127);
-
-    text.setString("Hello! Welcome to the Mandelbrot! Press anywhere on the screen to start!");
-
-    text.setCharacterSize(35);
+    text.setCharacterSize(15);
     text.setFillColor(sf::Color::White);
     text.setFont(font);
 
-	bool updateLeft = true;
-	bool updateRight = true;
+	bool updateText = false;
+
+	Vector2i mousePixelRight;
+	Vector2i mousePixelLeft;
+	Vector2i mousePixelLocation;
 
 	while (window.isOpen())
 	{
@@ -43,6 +43,11 @@ int main()
 		****************************************
 		*/
 
+		if (updateText == true)
+		{
+			plane.loadText(text);
+		}
+		
 		Event event;
 		while (window.pollEvent(event))
 		{
@@ -54,22 +59,37 @@ int main()
 					cout << "the left button was pressed" << std::endl;
 					cout << "mouse x: " << event.mouseButton.x << std::endl;
 					cout << "mouse y: " << event.mouseButton.y << std::endl;
+					;
+					mousePixelLeft.x = event.mouseButton.x;
+					mousePixelLeft.y = event.mouseButton.y;
 
-
-
-					updateLeft = true;
+					plane.setCenter(mousePixelLeft);
+					plane.zoomIn();
 				}
 				if (event.mouseButton.button == sf::Mouse::Right)
 				{
-					cout << "the left button was pressed" << std::endl;
+					cout << "the right button was pressed" << std::endl;
 					cout << "mouse x: " << event.mouseButton.x << std::endl;
 					cout << "mouse y: " << event.mouseButton.y << std::endl;
 
+					mousePixelRight.x = event.mouseButton.x;
+					mousePixelRight.y = event.mouseButton.y;
+
+					plane.setCenter(mousePixelRight);
+					plane.zoomOut();
 
 
-					updateRight = true;
 				}
+
 			}
+			if (event.type == sf::Event::MouseMoved)
+				{
+					mousePixelLocation.x = event.mouseMove.x;
+					mousePixelLocation.y = event.mouseMove.y;
+
+					plane.setMouseLocation(mousePixelLocation);
+				}
+			
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Escape))
 		{
@@ -81,12 +101,11 @@ int main()
 		Update the scene
 		****************************************
 		*/
-		if (updateLeft)
-		{
-			zoomOut();
+		
+		
+		plane.loadText(text);
+		plane.updateRender();
 
-
-		}
 
 		/*
 		****************************************
@@ -95,7 +114,8 @@ int main()
 		*/
 
 		window.clear();
-		
+		window.draw(plane);
+		window.draw(text);
 		window.display();
 	}
 
