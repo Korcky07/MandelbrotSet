@@ -4,7 +4,6 @@
 #include <sstream>
 #include <iomanip>
 #include <complex>
-#include <thread>
 
 using namespace sf;
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
@@ -19,6 +18,16 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
 	m_vArray = VertexArray(Points, pixelWidth * pixelHeight);
 	m_mouseLocation = Vector2f(0, 0);
 	m_zoomCount = 0;
+	int x = MAX_ITER / 5;
+
+	for (int i = 1; i < 5; i++)
+	{
+		regions.push_back(x * i);
+	}
+	for (int j = 1; j < 3; j++)
+	{
+		subregions.push_back((x / 3) * j);
+	}
 }
 
 void ComplexPlane::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -29,26 +38,50 @@ void ComplexPlane::updateRender()
 {
 	if (m_state == State::CALCULATING)
 	{
-		std::vector<std::thread*> threads;
 		int rows = 0;
 		int threadLimit = std::thread::hardware_concurrency();
 		if (threadLimit < 10)
 		{
 			threadLimit = 10;
 		}
-		for (int y = 0; y < threadLimit, rows < m_pixel_size.y; y++, rows++)
+		while (rows < m_pixel_size.y)
 		{
-			std::thread* t = new std::thread(&ComplexPlane::updateRenderHelper, rows);
-		}
+			for (int y = 0; y < threadLimit && rows < m_pixel_size.y; y++)
+			{
+				std::thread* t = new std::thread(&ComplexPlane::updateRenderHelper, this, rows);
+				threads.push_back(t);
+				rows++;
+			}
+		}	
 		for (int i = 0; i < threadLimit; i++)
 		{
-			threads[i]->join();
-			delete threads[i];
+			threads.at(i)->join();
+			delete threads.at(i);
 		}
 		threads.clear();
 		m_state = DISPLAYING;
 	}
 }
+/*void ComplexPlane::updateRender()
+{
+	if (m_state == State::CALCULATING)
+	{
+		for (int y = 0; y < m_pixel_size.y; y++)
+		{
+			for (int x = 0; x < m_pixel_size.x; x++)
+			{
+				size_t index = x + y * m_pixel_size.x;
+				m_vArray[index].position = Vector2f(float(x), float(y));
+				Vector2f coord = mapPixelToCoords(Vector2i(x, y));
+				size_t iterations = countIterations(coord);
+				Color color;
+				iterationsToRGB(iterations, color.r, color.g, color.b);
+				m_vArray[index].color = color;
+			}
+		}
+		m_state = DISPLAYING;
+	}
+}*/
 void ComplexPlane::updateRenderHelper(int y)
 {
 	for (int x = 0; x < m_pixel_size.x; x++)
@@ -120,7 +153,7 @@ size_t ComplexPlane::countIterations(sf::Vector2f coord)
 }
 void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b)
 {
-	std::vector<int> regions;
+	/* std::vector<int> regions;
 	std::vector<int> subregions;
 	int x = MAX_ITER / 5;
 
@@ -131,7 +164,7 @@ void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf:
 	for (int j = 1; j < 3; j++)
 	{
 		subregions.push_back((x / 3) * j);
-	}
+	}*/
 	if (count == MAX_ITER)
 	{
 		r = 0;

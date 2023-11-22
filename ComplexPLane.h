@@ -2,7 +2,8 @@
 #define COMPLEX_PLANE
 
 #include <SFML/Graphics.hpp>
-const unsigned int MAX_ITER = 64;
+#include <thread>
+const unsigned int MAX_ITER = 256;
 const float BASE_WIDTH = 4.0;
 const float BASE_HEIGHT = 4.0;
 const float BASE_ZOOM = 0.5;
@@ -20,6 +21,7 @@ public:
 	void setCenter(sf::Vector2i mousePixel);
 	void setMouseLocation(sf::Vector2i mousePixel);
 	void loadText(sf::Text& text);
+	std::vector<std::thread*> threads;
 	
 private:
 	sf::VertexArray m_vArray;
@@ -34,5 +36,8 @@ private:
 	void iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b);
 	sf::Vector2f mapPixelToCoords(sf::Vector2i mousePixel);
 	void updateRenderHelper(int y);
+	std::vector<int> regions;
+	std::vector<int> subregions;
+
 };
 #endif // !COMPLEX_PLANE
