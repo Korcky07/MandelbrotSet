@@ -3,6 +3,7 @@
 #include <cmath> //maybe remove later if zoom in/out doesn't use exponents
 #include <sstream>
 #include <iomanip>
+#include <complex>
 
 using namespace sf;
 ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
@@ -85,12 +86,86 @@ void ComplexPlane::loadText(sf::Text& text)
 
 size_t ComplexPlane::countIterations(sf::Vector2f coord)
 {
-	
-	return 0;
+	std::complex<double> c(coord.x,coord.y);
+	std::complex<double> z(0,0);
+
+	for (int i = 1; i < MAX_ITER; i++)
+	{
+		z = z * z + c;
+		if (abs(z) > 2)
+		{
+			return i;
+		}
+	}
+	return MAX_ITER;
 }
 void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf::Uint8& b)
 {
+	std::vector<int> regions;
+	std::vector<int> subregions;
+	int x = MAX_ITER / 5;
 
+	for (int i = 1; i < 5; i++)
+	{
+		regions.push_back(x * i);
+	}
+	for (int j = 1; j < 3; j++)
+	{
+		subregions.push_back((x / 3) * j);
+	}
+	if (count == MAX_ITER)
+	{
+		r = 0;
+		g = 0;
+		b = 0;
+	}
+	else if (count >= regions.at(3))
+	{
+		r = 251;
+		g = 249;
+		b = 204;
+	}
+	else if (count >= regions.at(2))
+	{
+		r = 204;
+		g = 251;
+		b = 209;
+	}
+	else if (count >= regions.at(1))
+	{
+		r = 204;
+		g = 244;
+		b = 251;
+	}
+	else if (count >= regions.at(0))
+	{
+		r = 233;
+		g = 204;
+		b = 251;
+	}
+	else
+	{
+		if (count >= subregions.at(1))
+		{
+			r = 251;
+			g = 204;
+			b = 215;
+		}
+		else if (count >= subregions.at(0))
+		{
+			r = 225;
+			g = 138;
+			b = 158;
+		}
+		else
+		{
+			r = 222;
+			g = 87;
+			b = 118;
+		}
+		
+
+	}
 }
 sf::Vector2f ComplexPlane::mapPixelToCoords(sf::Vector2i mousePixel)
 {

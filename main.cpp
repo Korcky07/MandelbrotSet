@@ -28,8 +28,6 @@ int main()
     text.setFillColor(sf::Color::White);
     text.setFont(font);
 
-	bool updateText = false;
-
 	Vector2i mousePixelRight;
 	Vector2i mousePixelLeft;
 	Vector2i mousePixelLocation;
@@ -43,10 +41,6 @@ int main()
 		****************************************
 		*/
 
-		if (updateText == true)
-		{
-			plane.loadText(text);
-		}
 		
 		Event event;
 		while (window.pollEvent(event))
