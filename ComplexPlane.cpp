@@ -54,7 +54,7 @@ void ComplexPlane::updateRender()
 				threads.push_back(t);
 				rows++;
 			}
-			for (int i = 0; i < threadLimit; i++)
+			for (int i = 0; i < threads.size(); i++)
 			{
 				threads.at(i)->join();
 				delete threads.at(i);
