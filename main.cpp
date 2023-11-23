@@ -1,7 +1,7 @@
 #include <iostream> 
 #include <complex> 
 #include <SFML/Graphics.hpp>
-#include "ComplexPLane.h"
+#include "ComplexPlane.h"
 using namespace std;
 using namespace sf;
 

@@ -1,5 +1,4 @@
 #include "ComplexPlane.h"
-#include <iostream>
 #include <cmath> //maybe remove later if zoom in/out doesn't use exponents
 #include <sstream>
 #include <iomanip>
@@ -13,8 +12,6 @@ ComplexPlane::ComplexPlane(int pixelWidth, int pixelHeight)
 	m_aspectRatio = pixelHeight / float(pixelWidth);
 	m_plane_center = Vector2f(0, 0);
 	m_plane_size = Vector2f(BASE_WIDTH, BASE_HEIGHT * m_aspectRatio);
-	std::cout << m_plane_size.x << " ";
-	std::cout << m_plane_size.y;
 	m_state = State::CALCULATING;
 	m_vArray = VertexArray(Points, pixelWidth * pixelHeight);
 	m_mouseLocation = Vector2f(0, 0);
@@ -54,7 +51,7 @@ void ComplexPlane::updateRender()
 				threads.push_back(t);
 				rows++;
 			}
-			for (int i = 0; i < threadLimit; i++)
+			for (int i = 0; i < threads.size(); i++)
 			{
 				threads.at(i)->join();
 				delete threads.at(i);
@@ -192,7 +189,7 @@ void ComplexPlane::iterationsToRGB(size_t count, sf::Uint8& r, sf::Uint8& g, sf:
 sf::Vector2f ComplexPlane::mapPixelToCoords(sf::Vector2i mousePixel)
 {
 	Vector2f result;
-	result.x = (mousePixel.x / m_pixel_size.x) * m_plane_size.x + (m_plane_center.x - m_plane_size.x / 2.0);
+	result.x = (mousePixel.x / m_pixel_size.x) * m_plane_size.x + (m_plane_center.x - m_plane_size.x / 2.0); //((n  - a) / (b - a)) * (d - c) + c
 	result.y = ((m_pixel_size.y - mousePixel.y) / m_pixel_size.y) * m_plane_size.y + (m_plane_center.y - m_plane_size.y / 2.0);
 	return result;
 }
